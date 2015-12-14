@@ -13,6 +13,7 @@ export default Ember.Component.extend({
     'clipboardTarget:data-clipboard-target',
     'clipboardAction:data-clipboard-action',
     'buttonType:type'
+    'aria-label:aria-label'
   ],
 
   /**
@@ -26,20 +27,26 @@ export default Ember.Component.extend({
   buttonType: 'button',
 
   didInsertElement() {
-    let clipboard = new Clipboard(`#${this.get('elementId')}`);
-    set(this, 'clipboard', clipboard);
+  let clipboard = new Clipboard(`#${this.get('elementId')}`, {
+    text: function() {
+      var html_signature = document.querySelector(arguments[0].dataset.clipboardText).innerHTML;
+      return html_signature;
+    }
+  });
 
-    get(this, 'clipboardEvents').forEach(action => {
-      clipboard.on(action, Ember.run.bind(this, function(e) {
-        try {
-          this.sendAction(action, e);
-        }
-        catch(error) {
-          Ember.Logger.debug(error.message);
-        }
-      }));
-    });
-  },
+  set(this, 'clipboard', clipboard);
+
+  get(this, 'clipboardEvents').forEach(action => {
+    clipboard.on(action, Ember.run.bind(this, function(e) {
+      try {
+        this.sendAction(action, e);
+      }
+      catch(error) {
+        Ember.Logger.debug(error.message);
+      }
+    }));
+  });
+},
 
   willDestroyElement() {
     get(this, 'clipboard').destroy();
