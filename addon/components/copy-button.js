@@ -12,7 +12,7 @@ export default Ember.Component.extend({
     'clipboardText:data-clipboard-text',
     'clipboardTarget:data-clipboard-target',
     'clipboardAction:data-clipboard-action',
-    'buttonType:type'
+    'buttonType:type',
     'aria-label:aria-label'
   ],
 
